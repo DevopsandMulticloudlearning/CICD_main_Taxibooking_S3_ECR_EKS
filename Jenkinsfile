@@ -41,30 +41,16 @@ environment {
                 }
             }
         }
-        stage("Jar Publish") {
+	stage('Push') {
         steps {
-            script {
-                    echo '<----------- The Jar Publish Started --------------->'
-                     def server = Artifactory.newServer url:registry,  credentialsId:"jfrog-cred"
-                     def properties = "buildid=${env.BUILD_ID},commitid=${GIT_COMMIT}";
-                     def uploadSpec = """{
-                          "files": [
-                            {
-                              "pattern": "/home/ubuntu/jenkins/workspace/taxi-booking/taxi-booking/target/(*)",
-                              "target": "taxiapp-libs-release-local/{1}",
-                              "flat": "false",
-                              "props" : "${properties}",
-                              "exclusions": [ "*.sha1", "*.md5"]
-                            }
-                         ]
-                     }"""
-                     def buildInfo = server.upload(uploadSpec)
-                     buildInfo.env.collect()
-                     server.publishBuildInfo(buildInfo)
-                     echo '<------------ Jar Publish Ended --------------->'  
-             }
-        }   
-    }
+            script{
+                docker.withRegistry('https://642391958117.dkr.ecr.us-east-1.amazonaws.com/taxi-booking', 'ecr:us-east-1:aws-credentials') {
+                app.push("latest")                                                                        
+                }
+            }
+        }
+	}
+
     stage(" Docker Build ") {
       steps {
         script {
