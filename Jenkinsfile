@@ -7,9 +7,9 @@ pipeline {
 environment {
     PATH = "/opt/apache-maven-3.8.9/bin:$PATH"
     (SONAR_TOKEN = credentials('SONAR_TOKEN'))
-    AWS_REGION = 'ap-south-1'
+    AWS_REGION = 'us-east-1'
     S3_BUCKET = 'my-war-bucket'
-    ECR_REPO = '123456789012.dkr.ecr.ap-south-1.amazonaws.com/my-app'
+    ECR_REPO = '642391958117.dkr.ecr.us-east-1.amazonaws.com/taxi-booking-app'
     IMAGE_TAG = "v1.${BUILD_NUMBER}"
     
 }
