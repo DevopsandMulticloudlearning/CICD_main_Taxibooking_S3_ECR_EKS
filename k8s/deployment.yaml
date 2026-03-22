@@ -7,17 +7,15 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app:  taxi-booking
+      app: taxi-booking
   template:
     metadata:
       labels:
-        app:  taxi-booking
+        app: taxi-booking
     spec:
-      imagePullSecrets:
-      - name: jfrog-cred
       containers:
-      - name:  taxi-booking
-        image: taxiapp1.jfrog.io/taxiapp1-docker-local/taxiapp:1.0.1
+      - name: taxi-booking
+        image: 642391958117.dkr.ecr.us-east-1.amazonaws.com/taxi-booking-app:v1.2
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
