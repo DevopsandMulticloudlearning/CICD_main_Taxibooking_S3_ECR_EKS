@@ -1,6 +1,3 @@
-def registry = 'https://taxiappj7.jfrog.io/artifactory'
-def imageName = 'taxiappj7.jfrog.io/taxiapp-docker-local/taxiapp'
-def version   = '1.0.1'
 pipeline {
     agent {
         node {
@@ -10,6 +7,10 @@ pipeline {
 environment {
     PATH = "/opt/apache-maven-3.8.9/bin:$PATH"
     (SONAR_TOKEN = credentials('SONAR_TOKEN'))
+    AWS_REGION = 'ap-south-1'
+    S3_BUCKET = 'my-war-bucket'
+    ECR_REPO = '123456789012.dkr.ecr.ap-south-1.amazonaws.com/my-app'
+    IMAGE_TAG = "v1.${BUILD_NUMBER}"
     
 }
    stages {
@@ -41,35 +42,44 @@ environment {
                 }
             }
         }
-	stage('Push') {
-        steps {
-            script{
-                docker.withRegistry('https://642391958117.dkr.ecr.us-east-1.amazonaws.com/taxi-booking', 'ecr:us-east-1:aws-credentials') {
-                app.push("latest")                                                                        
-                }
+        stage('Upload WAR to S3') {
+            steps {
+                sh '''
+                aws s3 cp target/*.war s3://$S3_BUCKET/
+                '''
             }
         }
-	}
 
-    stage(" Docker Build ") {
-      steps {
-        script {
-           echo '<--------------- Docker Build Started --------------->'
-           app = docker.build("${imageName}:${version}")
-           echo '<--------------- Docker Build Ends --------------->'
-        }
-      }
-    }
-     stage (" Docker Publish "){
-        steps {
-            script {
-               echo '<--------------- Docker Publish Started --------------->'  
-                docker.withRegistry(registry, 'jfrog-cred'){
-                    app.push()
-                }    
-               echo '<--------------- Docker Publish Ended --------------->'  
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                docker build -t my-app:${IMAGE_TAG} .
+                '''
             }
         }
-    }
+        stage('Login to ECR') {
+            steps {
+                sh '''
+                aws ecr get-login-password --region $AWS_REGION | \
+                docker login --username AWS --password-stdin $ECR_REPO
+                '''
+            }
+        }
+
+        stage('Tag Image') {
+            steps {
+                sh '''
+                docker tag my-app:${IMAGE_TAG} $ECR_REPO:${IMAGE_TAG}
+                '''
+            }
+        }
+
+        stage('Push to ECR') {
+            steps {
+                sh '''
+                docker push $ECR_REPO:${IMAGE_TAG}
+                '''
+            }
+        }
 }
 }
