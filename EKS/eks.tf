@@ -90,6 +90,11 @@ resource "aws_iam_role_policy_attachment" "node_policy_3" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
 }
 
+resource "aws_iam_role_policy_attachment" "eks_access" {
+  role       = "jenkins-ec2-role"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+}
+
 ########################
 # EKS CLUSTER
 ########################
