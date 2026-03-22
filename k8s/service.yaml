@@ -31,17 +31,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus-kube-prometheus-prometheus
-  namespace: monitoring   
+  name: prometheus-external
+  namespace: monitoring
 spec:
   type: LoadBalancer
   selector:
     app.kubernetes.io/name: prometheus
-    app.kubernetes.io/instance: kube-prometheus
+    prometheus: kube-prometheus-prometheus
   ports:
     - name: web
       port: 9090
       targetPort: web
-    - name: http
-      port: 8080
-      targetPort: 8080
