@@ -5,7 +5,7 @@ pipeline {
         }
     }
 environment {
-    PATH = "/opt/apache-maven-3.9.15/bin:$PATH"
+    PATH = "/opt/apache-maven-3.9.16/bin:$PATH"
     (SONAR_TOKEN = credentials('SONAR_TOKEN'))
     AWS_REGION = 'us-east-1'
     S3_BUCKET = 'my-war-bucket'
