@@ -19,7 +19,7 @@
       apt_repository:
         repo: "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian binary/"
         filename: jenkins
-        state: present
+        state: latest
 
     - name: Update apt cache
       apt:
@@ -30,12 +30,12 @@
         name:
           - fontconfig
           - openjdk-21-jdk
-        state: present
+        state: latest
 
     - name: Install Jenkins
       apt:
         name: jenkins
-        state: present
+        state: latest
 
     - name: Start Jenkins service
       service:
