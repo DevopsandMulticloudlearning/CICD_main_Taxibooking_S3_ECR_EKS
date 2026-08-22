@@ -10,7 +10,7 @@
   - name: install java
     apt:
       name: openjdk-21-jre
-      state: present
+      state: latest
 
   - name: download maven packages
     get_url:
@@ -26,7 +26,7 @@
   - name: install docker
     apt:
       name: docker.io
-      state: present
+      state: latest
 
   - name: start docker services
     service:
